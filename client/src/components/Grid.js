@@ -3,12 +3,19 @@ import Square from "./Square";
 import HSeperator from "./HSeperator";
 import VSeperator from "./VSeperator";
 
-function Grid({state, setSquare}) {
+/**
+ * 
+ * @param {*} state state of the game. 
+ * @param {*} setSquare callback to set square
+ * @param {*} player1 player1 id 
+ * @param {*} player2 player2 id
+ */
+function Grid({state, setSquare, player1, player2}) {
     
   const square = (x, y) => {
     return (
       <div style={styles.rowStyle}>
-        <Square state={state[y][x]} setSquare={() => setSquare(x, y)} />
+        <Square state={state[y][x]} player1={player1} player2={player2} setSquare={() => setSquare(x, y)} />
       </div>
     );
   };

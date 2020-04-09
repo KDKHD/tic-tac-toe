@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Grid from "./Grid";
 import socketIO from "socket.io-client";
+import { withSnackbar } from 'notistack';
 
 const socket = socketIO("http://192.168.1.119:3000", {
   transports: ["websocket"],
@@ -11,11 +12,12 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      player1: "Alex",
-      player2: "Ivan",
+      player1: null,
+      player2: null,
       turn: 0,
       state: this.initialState(),
       moveCounter: 0,
+      result: null,
     };
   }
 
@@ -29,49 +31,68 @@ class Game extends Component {
 
   componentDidMount() {
     socket.connect();
-    socket.on("connect", () => {
-      console.log("connected to socket server");
+    socket.emit("newPlayer", Math.floor(Math.random() * 100));
+
+    socket.on("state", (gameState) => {
+      console.log(gameState);
+      if (gameState.error) return;
+      this.setState({
+        state: gameState._state,
+        player1: gameState._player1,
+        player2: gameState._player2,
+        turn: gameState.turn._id,
+        result: gameState._result,
+      });
     });
-    socket.on("state", (state) => this.setState(state));
+
+    socket.on("err", ({ error, message }) => {
+      this.props.enqueueSnackbar(message)
+    });
   }
 
   setSquare = async (x, y) => {
-    let state = this.state.state;
-    if (state[y][x] == -1) {
-      state[y][x] = this.state.turn;
-      await this.setState({
-        state,
-        turn: this.state.moveCounter == 8 ? -1 : this.state.turn ? 0 : 1,
-        moveCounter: this.state.moveCounter + 1,
-      });
-      socket.emit("state", this.state);
-    }
+    socket.emit("move", [x, y]);
   };
 
   render() {
     return (
       <div style={styles.container}>
+
         <div>
-          <h3
-            style={{
-              ...styles.h3,
-              ...(this.state.turn == -1
-                ? { color: "black" }
-                : this.state.turn
-                ? { color: "#27ae60" }
-                : { color: "#2980b9" }),
-            }}
-          >
-            {this.state.moveCounter == 9
-              ? "Game over"
-              : this.state.turn
-              ? this.state.player1
-              : this.state.player2}
-          </h3>
+          {this.state.result === null && (
+            <h3
+              style={{
+                ...styles.h3,
+                ...(this.state.turn == -1
+                  ? { color: "black" }
+                  : this.state.turn
+                  ? { color: "#27ae60" }
+                  : { color: "#2980b9" }),
+              }}
+            >
+              {this.state.turn}
+            </h3>
+          )}
+          {this.state.result!==null && (
+            <h3
+              style={{
+                ...styles.h3,
+                ...(this.state.turn == -1
+                  ? { color: "black" }
+                  : this.state.turn
+                  ? { color: "#27ae60" }
+                  : { color: "#2980b9" }),
+              }}
+            >
+              {this.state.result === 0?"Draw":`Player ${this.state.result} won the game`}
+            </h3>
+          )}
           <Grid
             turn={this.state.turn}
             state={this.state.state}
             setSquare={this.setSquare}
+            player1={this.state.player1}
+            player2={this.state.player2}
           />
         </div>
       </div>
@@ -92,4 +113,4 @@ const styles = {
   },
 };
 
-export default Game;
+export default withSnackbar(Game);

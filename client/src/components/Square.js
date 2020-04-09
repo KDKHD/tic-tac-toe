@@ -15,18 +15,19 @@ const styles = {
     height: "200px",
   },
   iconStyle: {
-    "max-width": "70%",
-    "max-height": "70%",
+    "maxWidth": "70%",
+    "maxHeight": "70%",
   },
 };
 
-const getIcon = (state) => {
+const getIcon = (state, player1, player2) => {
+  if(player1===null || player2 === null) return null
   switch (state) {
-    case 0: {
+    case player1._id: {
       return <img src={o} alt="circle" style={styles.iconStyle} />;
       break;
     }
-    case 1: {
+    case player2._id: {
       return <img src={x} alt="x" style={styles.iconStyle} />;
       break;
     }
@@ -36,10 +37,10 @@ const getIcon = (state) => {
   }
 };
 
-function Square({ state, setSquare }) {
+function Square({ state, setSquare, player1, player2 }) {
   return (
       <div style={styles.squareStyle} onClick={setSquare}>
-        <div style={styles.content}>{getIcon(state)}</div>
+        <div style={styles.content}>{getIcon(state, player1, player2)}</div>
       </div>
   );
 }
