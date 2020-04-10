@@ -17,7 +17,7 @@ const getLoader = () => {
 
 const loader = getLoader();
 
-const socket = socketIO("http://192.168.1.119:3000", {
+const socket = socketIO("http://localhost:5000", {
   transports: ["websocket"],
   jsonp: false,
 });
