@@ -73,7 +73,6 @@ io.on('connection', function(socket){
         
       } 
       io.to(socket.game.id).emit("message", {error:"OPPONENT_DISCONNECT", message: "Opponent disconnected", variant: "error"});
-      io.to(socket.game.id).emit("message", {message: "Game ended", variant: "success"});
       io.to(socket.game.id).emit("state", {...socket.game});
       GM.closeGame(socket.game)
    } 
