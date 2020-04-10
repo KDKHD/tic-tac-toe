@@ -52,7 +52,7 @@ class Game{
 
     set result(r){
         if(this._result != null) throw "Game already has result"
-        if([null, 0, 1, 2].includes(r)){
+        if([null, 0, this.player1?this.player1.id:null, this.player2?this.player2.id:null].includes(r)){
             this._result = r
         }
         else{
@@ -130,14 +130,14 @@ class Game{
      * @param {*} p player making move
      */
     makeMove(x, y, p){
+        if(this.result!=null){ 
+            throw "Game has ended"; 
+        }
         if(!this.isValidCoordinate){
             throw "Move not in board range"
         }
         if(!this.isFull){ 
             throw "Game doesn't have 2 players"; 
-        }
-        if(this.result!=null){ 
-            throw "Game has ended"; 
         }
 
         //make sure that it is this players turn
@@ -159,7 +159,7 @@ class Game{
             }
         }
         else{
-            throw "It is not this player's turn"
+            throw "It is not this your turn"
         }
       };
 
@@ -169,7 +169,7 @@ class Game{
 
     refreshResult(x, y, p){
         if(this.checkWin(x, y, p)){
-            this.result = (p==this.player1._id)?1:2
+            this.result = p
         }
         if(this.history.length == this.boardSize * this.boardSize){
             this.result = 0

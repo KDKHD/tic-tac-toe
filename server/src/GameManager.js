@@ -35,6 +35,14 @@ class GameManager{
         }
     }
 
+    closeGame(g){
+        delete this.onGoingGames[g.id]
+        for(let i = 0; i < this.openGames.length; i ++){
+            if(this.openGames[i].id == g.id) this.openGames.splice(i, 1);
+        }
+
+    }
+
     addGameToOngoing(g){
         if(g.isFull){
             this.onGoingGames[g.id] = g
@@ -50,6 +58,7 @@ class GameManager{
         try{
             g.addPlayer(p)
             this.playerToGame[p.id] = g.id
+            p.gameId = g.id
             if(g.isFull){
                 this.addGameToOngoing(g)
                 return true
