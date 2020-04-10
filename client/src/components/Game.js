@@ -17,7 +17,7 @@ const getLoader = () => {
 
 const loader = getLoader();
 
-const socket = socketIO("http://tictactoe-sockets.herokuapp.com", {
+const socket = socketIO("https://tictactoe-sockets.herokuapp.com", {
   transports: ["websocket"],
   jsonp: false,
 });
