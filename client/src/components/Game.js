@@ -4,7 +4,6 @@ import socketIO from "socket.io-client";
 import { withSnackbar } from "notistack";
 import * as loading from "react-loadingg";
 
-const 
 const getLoaders = (obj) =>
   Object.getOwnPropertyNames(obj).filter(
     (item) => typeof obj[item] === "function"
