@@ -1,4 +1,5 @@
-var app = require('express')();
+const express = require('express');
+const app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var {GameManager} = require('./src/GameManager.js')
@@ -6,6 +7,14 @@ var {Player} = require('./src/Player.js')
 
 let GM = new GameManager()
 
+const path = require('path');
+const port = process.env.PORT || 5000;
+app.use(express.static(path.join(__dirname, 'client/build')));
+if(process.env.NODE_ENV === 'production') {  
+  app.use(express.static(path.join(__dirname, 'client/build')));  
+  app.get('*', (req, res) => {    res.sendfile(path.join(__dirname = 'client/build/index.html'));  
+})}
+app.get('*', (req, res) => {  res.sendFile(path.join(__dirname+'/client/public/index.html'));})
 
 app.get('/', function(req, res){
   res.status(200).send("ool")
@@ -62,6 +71,6 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(5000, function(){
-  console.log('listening on *:5000');
-});
+
+
+http.listen(port, (req, res) => {  console.log(`server listening on port: ${port}`);})
