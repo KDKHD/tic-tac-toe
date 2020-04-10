@@ -9,11 +9,13 @@ let GM = new GameManager()
 
 const path = require('path');
 const port = process.env.PORT || 5000;
+
 app.use(express.static(path.join(__dirname, 'client/build')));
 if(process.env.NODE_ENV === 'production') {  
   app.use(express.static(path.join(__dirname, 'client/build')));  
   app.get('*', (req, res) => {    res.sendfile(path.join(__dirname = 'client/build/index.html'));  
 })}
+
 app.get('*', (req, res) => {  res.sendFile(path.join(__dirname+'/client/public/index.html'));})
 
 app.get('/', function(req, res){
@@ -24,13 +26,20 @@ io.on('connection', function(socket){
 
   socket.on('move', function([x, y]){
     try {
-      socket.game.makeMove(x, y, socket.player.id)
-      io.to(socket.game.id).emit("state", {...socket.game});
-      if(socket.game.result !== null) io.to(socket.game.id).emit("message", {message: "Game ended", variant: "success"});
-
+      if(socket.game!==null){
+        socket.game.makeMove(x, y, socket.player.id)
+        io.to(socket.game.id).emit("state", {...socket.game});
+        if(socket.game.result !== null) {
+          io.to(socket.game.id).emit("message", {message: "Game ended", variant: "success"});
+          GM.closeGame(socket.game)
+        };
+      }else{
+        socket.emit("message", {error:"GAME_END", message: "Game has ended", variant: "warning"});
+      }
     }catch(e){
       console.log(e)
       socket.emit("message", {error:"MOVE_FAIL", message: e, variant: "warning"});
+      io.to(socket.game.id).emit("state", {...socket.game});
     }
   });
 
@@ -41,8 +50,8 @@ io.on('connection', function(socket){
     socket.game = game
     socket.join(game.id);
     socket.emit("player", newPlayer);
-    io.to(socket.game.id).emit("state", {...socket.game});
     if(game.isFull) io.to(socket.game.id).emit("message", {message: "Game started", variant: "success"});
+    io.to(socket.game.id).emit("state", {...socket.game});
 
   });
 
@@ -62,10 +71,10 @@ io.on('connection', function(socket){
         }
       }catch(e){
         
-      }
-      io.to(socket.game.id).emit("state", {...socket.game}); 
+      } 
       io.to(socket.game.id).emit("message", {error:"OPPONENT_DISCONNECT", message: "Opponent disconnected", variant: "error"});
       io.to(socket.game.id).emit("message", {message: "Game ended", variant: "success"});
+      io.to(socket.game.id).emit("state", {...socket.game});
       GM.closeGame(socket.game)
    } 
   });

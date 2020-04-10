@@ -130,7 +130,8 @@ class Game{
      * @param {*} p player making move
      */
     makeMove(x, y, p){
-        if(this.result!=null){ 
+        if(this.result!==null){ 
+            console.log(this)
             throw "Game has ended"; 
         }
         if(!this.isValidCoordinate){
@@ -169,9 +170,11 @@ class Game{
 
     refreshResult(x, y, p){
         if(this.checkWin(x, y, p)){
+            console.log("here")
             this.result = p
         }
-        if(this.history.length == this.boardSize * this.boardSize){
+        else if(this.history.length == this.boardSize * this.boardSize){
+            console.log("fuck")
             this.result = 0
         }
     }
