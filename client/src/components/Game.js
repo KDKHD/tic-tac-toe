@@ -4,6 +4,7 @@ import socketIO from "socket.io-client";
 import { withSnackbar } from "notistack";
 import * as loading from "react-loadingg";
 
+const 
 const getLoaders = (obj) =>
   Object.getOwnPropertyNames(obj).filter(
     (item) => typeof obj[item] === "function"
@@ -17,7 +18,7 @@ const getLoader = () => {
 
 const loader = getLoader();
 
-const socket = socketIO("http://localhost:5000", {
+const socket = socketIO(process.env.PORT?"http://tictactoe-sockets.herokuapp.com:"+process.env.PORT:"http://localhost:5000", {
   transports: ["websocket"],
   jsonp: false,
 });
