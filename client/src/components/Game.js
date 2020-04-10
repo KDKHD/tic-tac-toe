@@ -17,7 +17,7 @@ const getLoader = () => {
 
 const loader = getLoader();
 
-const socket = socketIO(process.env.PORT?"http://tictactoe-sockets.herokuapp.com:"+process.env.PORT:"http://localhost:5000", {
+const socket = socketIO("http://tictactoe-sockets.herokuapp.com", {
   transports: ["websocket"],
   jsonp: false,
 });
